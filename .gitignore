@@ -1,2 +1,4 @@
 .idea
 .DS_Store
+src/chess/chess.test
+src/chess/mem.out
