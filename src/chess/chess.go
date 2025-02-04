@@ -61,12 +61,18 @@ func ParsePosition(position string) (Position, error) {
 	return Position{Col: col, Row: row}, nil
 }
 
-func GetValidMoves(piece string, position Position) ([]string, error) {
-	var moves []string
+func GetValidMoves(piece string, position Position) ([]Position, error) {
+	var moves []Position
 	var tempPositions Position
 
 	//You are accessing a map using the key.
 	dirs, exists := directions[piece]
+
+	if piece == "queen" {
+		moves = make([]Position, 0, 27)
+	} else {
+		moves = make([]Position, 0, len(dirs))
+	}
 
 	if !exists {
 		return nil, fmt.Errorf("invalid piece - %s", piece)
@@ -80,7 +86,7 @@ func GetValidMoves(piece string, position Position) ([]string, error) {
 				if !tempPositions.isValid() {
 					continue
 				}
-				moves = append(moves, tempPositions.String())
+				moves = append(moves, tempPositions)
 			}
 		}
 	} else {
@@ -90,7 +96,7 @@ func GetValidMoves(piece string, position Position) ([]string, error) {
 			if !tempPositions.isValid() {
 				continue
 			}
-			moves = append(moves, tempPositions.String())
+			moves = append(moves, tempPositions)
 		}
 	}
 	return moves, nil
