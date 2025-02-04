@@ -192,12 +192,19 @@ func TestGetValidMoves(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			position := MustParsePosition(ParsePosition(tt.args.position))
 			got, err := GetValidMoves(tt.args.piece, position)
+			gotString := PosToString(got)
+
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetValidMoves() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetValidMoves() got = %v, want %v", got, tt.want)
+
+			if (err != nil) == tt.wantErr {
+				return
+			}
+
+			if !reflect.DeepEqual(gotString, tt.want) {
+				t.Errorf("GetValidMoves() got = %v, want %v", gotString, tt.want)
 			}
 		})
 	}
@@ -210,10 +217,18 @@ func MustParsePosition(position Position, err error) Position {
 	return position
 }
 
+func PosToString(p []Position) []string {
+	var moves = make([]string, 0, len(p))
+	for _, pos := range p {
+		moves = append(moves, pos.String())
+	}
+	return moves
+}
+
 func BenchmarkGetValidMoves(b *testing.B) {
 	piece := "queen"
 	position := Position{Col: 4, Row: 4}
-	var result []string
+	var result []Position
 
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
