@@ -2,23 +2,8 @@ package chess
 
 import (
 	"errors"
-	"fmt"
 	"unicode"
 )
-
-var directions = map[string][][]int{
-	"pawn": {{1, 0}},
-	"king": {
-		{-1, -1}, {-1, 0}, {-1, 1},
-		{0, -1}, {0, 1},
-		{1, -1}, {1, 0}, {1, 1},
-	},
-	"queen": {
-		{-1, -1}, {-1, 0}, {-1, 1},
-		{0, -1}, {0, 1},
-		{1, -1}, {1, 0}, {1, 1},
-	},
-}
 
 type Position struct {
 	// Not to return more than 3 values from a method.
@@ -62,24 +47,23 @@ func ParsePosition(position string) (Position, error) {
 }
 
 func GetValidMoves(piece string, position Position) ([]Position, error) {
-	var moves []Position
+
+	p := PieceMoves{}
+	if piece == "pawn" {
+		p = p.Pawn()
+	} else if piece == "king" {
+		p = p.King()
+	} else if piece == "queen" {
+		p = p.Queen()
+	} else {
+		return nil, errors.New("invalid piece")
+	}
+
+	var moves = make([]Position, 0, p.MaxMoves)
 	var tempPositions Position
 
-	//You are accessing a map using the key.
-	dirs, exists := directions[piece]
-
-	if piece == "queen" {
-		moves = make([]Position, 0, 27)
-	} else {
-		moves = make([]Position, 0, len(dirs))
-	}
-
-	if !exists {
-		return nil, fmt.Errorf("invalid piece - %s", piece)
-	}
-
-	if piece == "queen" {
-		for _, dir := range dirs {
+	if p.ChessPiece == "queen" {
+		for _, dir := range p.Moves {
 			for step := 1; step < 8; step++ {
 				tempPositions.Row = position.Row + dir[0]*step
 				tempPositions.Col = position.Col + dir[1]*step
@@ -90,7 +74,7 @@ func GetValidMoves(piece string, position Position) ([]Position, error) {
 			}
 		}
 	} else {
-		for _, dir := range dirs {
+		for _, dir := range p.Moves {
 			tempPositions.Row = position.Row + dir[0]
 			tempPositions.Col = position.Col + dir[1]
 			if !tempPositions.isValid() {

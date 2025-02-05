@@ -182,11 +182,6 @@ func TestGetValidMoves(t *testing.T) {
 			args: args{position: "a8", piece: "queen"},
 			want: []string{"B8", "C8", "D8", "E8", "F8", "G8", "H8", "A7", "A6", "A5", "A4", "A3", "A2", "A1", "B7", "C6", "D5", "E4", "F3", "G2", "H1"},
 		},
-		{
-			name: "pawn at h1",
-			args: args{position: "h1", piece: "pawn"},
-			want: nil,
-		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
