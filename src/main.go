@@ -20,7 +20,12 @@ func main() {
 		panic(err)
 	}
 
-	moves, err := chess.GetValidMoves(piece, pos)
+	p, err := chess.ParsePiece(piece)
+	if err != nil {
+		panic(err)
+	}
+
+	moves, err := chess.GetValidMoves(p, pos)
 	if err != nil {
 		panic(err)
 	}
